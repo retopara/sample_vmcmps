@@ -1,0 +1,11 @@
+3					//nrec, the times of temperature adjustment(recursion)
+5					//nexch, the times of temperature exchange
+10				//nswp, the times of local MC
+0					//nequi1, the times of relaxation at the beginning.
+0					//nequi2, the times of relaxation after one temperature adjustment.
+1					//the min beta(highest temperature)
+1000000		//the max beta(lowest temperature)
+0.0000001	//the tolerance of result
+
+//input for main()
+

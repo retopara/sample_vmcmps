@@ -1,0 +1,39 @@
+#!/bin/bash
+##the number of nodes, and the number of threads per node.
+#PBS -l nodes=1:ppn=2
+##the max time
+#PBS -l walltime=100:00:00
+#PBS -V
+##the name of the job 
+#PBS -N vmcmps
+
+##PBS -o my.output
+##PBS -e my.error
+
+#cat start time
+echo "Start Date:"
+date
+#cat running cores
+echo "I ran on:"
+cat $PBS_NODEFILE
+#
+# go to work dir
+cd $PBS_O_WORKDIR
+
+# setup Nums of Processor
+cat $PBS_NODEFILE
+N=`wc -l $PBS_NODEFILE | awk '{print $1}'`
+echo Nr nodes $N
+cat $PBS_NODEFILE | awk '!a[$0]++' | awk '{printf("%s slots=8\n",$1);}' > myhostfile
+
+# running program
+#/share/data2/openmpi-intel/bin/mpirun -np $N -machinefile myhostfile /share/data2/bin/vasp52-intel-mpi
+#/share/data2/openmpi-intel/bin/mpirun -np $N -machinefile myhostfile /share/data2/bin/vasp46-intel-mpi
+##input your executable file at the end of line
+#/opt/intel/impi/openmpi/bin/mpirun -np $N -machinefile myhostfile ./vmps.exe
+/usr/bin/mpirun -np $N -machinefile myhostfile ./vmps.exe
+
+#cat finish time
+echo -e "\\n"
+echo "Finish Date:"
+date

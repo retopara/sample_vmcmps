@@ -1,0 +1,6 @@
+3.141592653589793				//PI, the value of PI
+5												//CONVMAX
+2												//nscheme, the number of exchange schemes
+0.01										//sigmainit, the initial value for sigma.
+
+//the input for replica exchange initialization

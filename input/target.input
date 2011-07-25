@@ -1,0 +1,8 @@
+2						//dim, spin only have up or down, spin 1/2 system, dim = 2
+6						//schnum, schmidt number of decomposition is 8
+16					//N, the length of spin chain is 2^N
+300					//Nrelax, the number of relaxation sweeps
+400					//Nsample, the number of sweeps when calculating energy.
+1.0					//the strength of transverse field
+
+//the input for target function

@@ -1,0 +1,99 @@
+2010/03/17 (Wang Zhen)
+	Fix Bug:
+		fix REMC.cpp beta_index, pro_index malloc size, should be PARASIZE, not n.
+
+2010/03/11 (Wang Zhen)
+	Fix Bug:
+		remove one (*csa_count)++ int CSA.cpp, originally there were two.
+		make target_func_input.txt input only on the first time, originally it input every time CalcHami.cpp runs, 
+		and this way input values should be given to static variables.
+		remove all the Bcast behind an input, originally only process 0 input, then Bcast.
+		edit complex calculations in EP3.cpp into C++ form, this saves time.
+		all malloc now is only for the first time and never free, for a swifter program, HOW TO DEAL WITH THIS ????
+		add timing function to the program.
+		add output of the matrix.
+		fix bug is convergence judging, originally only process 0 quit.
+		
+		!!one reason doe result different from Fortran version, is that r2*kappa enlarges the cut-off error.
+
+2010/03/05 (Wang Zhen)
+	Fix Bug:
+		fix the reduce after each recursion, add r2 and doe send and recv
+		delete one extra csa_count++ in CSA.cpp
+
+2010/03/03 (Wang Zhen)
+	Fix Bug:
+		edit ischeme = ischeme % (*nscheme - 1) TO if(ischeme > (*nscheme - 1)) ischeme = 0
+		edit beta[i] = *betamin + i * (betamax - betamin)/PARASIZE; TO 
+			 beta[i] = *betamin + i * (*betamax - *betamin)/(PARASIZE-1);
+		edit deltah = (fvec_recv[1] - fvec_recv[0]) * (beta[high_beta] - beta[low_beta]); TO 
+			 deltah = (fvec_recv[0] - fvec_recv[1]) * (beta[high_beta] - beta[low_beta]);
+		set initial exch_count[] and exch_acpt_count[] value to 1		
+
+2010/03/01 21:53 (Wang Zhen)
+	add equi procedure before start and after each temperature adjustment
+
+2010/01/29 11:06 (Wang Zhen)
+	Conclusion: the exbeta[][] has 2 ways to be correct!
+	1.
+	    for(int i=0; i<nscheme; i++){
+            for(int j=0; j<PARASIZE; j++){
+                int k = i + nscheme*j;
+                if(k+1 <= PARASIZE) exbeta[i][j] = k;
+            }
+        }
+        AND
+        if(high_beta+1 > PARASIZE){
+			break;
+        }
+    2.
+    	for(int i=0; i<nscheme; i++){
+            for(int j=0; j<PARASIZE; j++){
+                int k = i + nscheme*j;
+                if(k+1 < PARASIZE) exbeta[i][j] = k;
+            }
+        }
+        AND
+		NONE!        
+
+
+2010/01/28 22:30 (Wang Zhen)
+	add break to high_beta > PARASIZE statement
+
+	delete the high_beta % PARASIZE statement
+	it can cause chaos
+
+	exit initialize exbeta[][]
+	origin: k+1 < PARASIZE
+	now: k+1 <= PARASIZE
+
+2010/01/10 11:43 (Wang Zhen)
+	Add #define DEBUG and relevant printf after mpi statements, to debug MPI codes
+	Add #define DEBUG in remc.h
+
+2010/01/10 10:04 (Wang Zhen)
+	Add tol parameter to REMC();
+	Add convergency judge code in REMC();
+	Add optional way to evaluate r2, i.e, the error in REMC()
+	
+2010/01/19 night (Wang Zhen)
+	change MPI_Send, MPI_Recv, tag value to 'tag' instead of '99'
+
+2010/01/19 12:35 (Wang Zhen)
+	type notes for each function's input and output	
+
+2010/01/19 (Wang Zhen)
+	Modularized
+
+==========================================================================
+2010/01/18 (Wang Zhen)
+
+Latest modifications for modularization:
+	put NORM() inside CalcHami()
+	put gendenmatrix() inside CalcHami()
+
+2009/10/29 (Wang Zhen)
+
+in main():
+fvec = doe = r2 = 10000000.0f;
+PI = 3.141592653589793f;
