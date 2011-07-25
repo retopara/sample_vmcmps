@@ -1,0 +1,372 @@
+README
+
+
+1. Modularized function input and output
+
+I: Input
+O: Output
+modified:	I	O
+const:	I	x
+
+void main()///////////////////////////////////////
+int argv		I	x
+char *argv[]	I	x
+int main		x	O
+
+	void REMC()/////TOTAL 8 I/Os//////////////////////////////////
+	double fvec				I	O
+	double r2				I	O
+	double betamin			I	x
+	double betamax			I	x
+	const int n				I	x
+	int nswp				I	x
+	int nexch				I	x
+	int nrec				I	x
+	double (*target_func)	I	x
+	void (*x_maker)			I	x
+		
+		void ReplicaInit()/////TOTAL 25 I/Os//////////////////////////////////
+		const int *n			I	x
+		double *betamin			I	x
+		double *betamax			I	x
+		const int *PARASIZE		I	x
+		double *x				I	O
+		double *x_new			I	O
+		double *x_min			I	O
+		int **exbeta			I	O
+		double *seed				I	O
+		int *seed_met			I	O
+		int *seedx				I	O
+		int *seed_cau			I	O
+		double *beta				I	O
+		int *pro_index			I	O
+		int *beta_index			I	O
+		int *nscheme			I	O
+		double *PI				I	O
+		double *fvec_recv		I	O
+		double *localmin_in		I	O
+		double *localmin_out		I	O
+		const int *myid			I	x
+		int *csa_acpt_count		I	O
+		double *sigma			I	O
+		int *exch_count			I	O
+		int *exch_acpt_count	I	O
+		
+		
+		void ExchTemper()/////TOTAL 10 I/Os//////////////////////////////////
+		const int *nscheme		I	x
+		int *exch_count			I	O
+		int *exch_acpt_count	I	O
+		int **exbeta		I	x	//compile wrong
+		int *pro_index			I	O
+		int *beta_index			I	O
+		const double *fvec		I	x
+		double *fvec_recv		I	O
+		const int *myid			I	x
+		const int *PARASIZE		I	x
+
+		void AdjustTemper()/////TOTAL 5 I/Os//////////////////////////////////
+		double *beta				I	O
+		double *exch_acpt_count	I	x
+		const int *irec			I	x
+		cosnt int *nrec			I	x
+		const int *PARA_SIZE	I	x
+
+		void CSA()/////TOTAL 18 I/Os//////////////////////////////////
+		const int n				I	x
+		const double PI			I	x
+		double *x_new			I	O
+		double *x				I	O
+		double *x_min			I	O
+		double *sigma			I	O
+		int *csa_acpt_count		I	O
+		double *fvec_new			I	O
+		double *fvec				I	O
+		double *fvec_min			I	O
+		double *r2				I	O
+		double *r2_min			I	O
+		int *csa_count			I	O
+		const double *beta_myid	I	x
+		int *seed_met			I	O
+		int *seed_cau			I	O
+		double (*target_func)	I	x
+		void (*x_maker)			I	x
+			
+	void XGenerator()/////TOTAL 9 I/Os//////////////////////////////////
+	const double *PI			I	x
+	const int *n			I	x
+	const int *i_x			I	x
+	const double *x			I	x
+	double *x_new			I	O
+	double *sigma			I	O
+	int *csa_acpt_count		I	O
+	int *csa_count			I	O
+	int *seed_cau			I	O	
+		
+	double* CalcHami()/////TOTAL 4 I/Os////////////////////////////////
+	double *x_new		I	O
+	double *r2			I	O
+	double *fvec_new		I	O
+	double *doe			x	O
+	
+		void Normalize()/////TOTAL 5 I/Os//////////////////////////////////
+		const int NC	I	x
+		const int NP	I	x
+		double *q		I	O
+		double **cr		I	O
+		double **ci		I	O
+		
+		void EP3()/////TOTAL 4 I/Os//////////////////////////////////
+		const double *cc_r	I	x
+		const double *cc_i	I	x
+		double *tau3			I	O
+		const int NLEV		I	x
+		
+		void M_generalized()/////TOTAL 5 I/Os//////////////////////////////////
+		const double p	I	x
+		const int NC	I	x
+		const int NP	I	x
+		double **matr	I	O
+		double **mati	I	O
+
+	END///////////////////////////////////////
+
+
+2. Variables exist range
+
+//project range
+int NPAR;
+int NLEV;
+int NP;
+double PI;
+
+int NC, m, n, csa_count;
+double doe_min, fvec_min, r2_min;
+double fvec, doe, r2;
+double fvec_new;
+double kappa;
+
+//pointers, malloc at the beginning of main()
+int csa_acpt_count[n];
+double x[n], sigma[n], x_min[n], x_new[n];
+double matr[NC][NC], mati[NC][NC];
+
+FILE: main.cpp  //file range
+    FUNCTION: main()    //function range
+    
+FILE: CSA.cpp    
+    FUNCTION: CSA()
+        double ACPT_MAX = 0.3f, ACPT_MIN = 0.2f;
+        double CONST1 = 2.0f, CONST2 = 2.0f;
+        int COUNT_MAX = 100;
+        
+        double csa_rate, ran_num, r0;
+            
+FILE: CalcHami.cpp
+    double tau3;
+               
+    FUNCTION: CalcHami()
+        double qcc_r, qcc_i;
+        double q[NP], cr[NP][NC], ci[NP][NC], cc_r[NC], cc_i[NC], fvec_spl[m];
+        
+    FUNCTION: EP3()
+        double omega_r[NLEV][NLEV][NLEV], omega_i[NLEV][NLEV][NLEV];
+        double d1_r, d1_i, d2_r, d2_i, d3_r, d3_i;
+        
+FILE: Normalize.cpp
+    FUNCTION: Normalize()
+        double q[NP], cr[NP][NC], ci[NP][NC], crm[NP];
+        double q2tot;
+        
+FILE: Ran.cpp
+    FUNCTION: Ran()
+        int IA, IM, IQ, IR, NTAB;
+        double EPS;
+
+        int i, j, iv[NTAB], iy, ndiv;
+        double am, rnmx;
+        
+FILE: Toolbox.cpp
+    FUNCTION: Max()
+    FUNCTION: Min()
+    FUNCTION: MaxInt()
+    FUNCTION: MetroFlag()
+    
+    
+PROGRAM PROCEDURES
+
+    #include "head.h"
+        contains the declarations of all functions
+        
+    
+        contains the definitions of global variables
+
+void main()        
+    ->START
+    
+    ->set variables definitions
+    ->malloc for variables
+    ->initialize variables: 
+        NPAR = 3;
+        NLEV = 2;
+        NP = 6;
+        PI = 3.141593f;
+
+        PARA_SIZE = 80; //temp set
+        nscheme = 2;
+
+        beta_min = 0.01f;
+        beta_max = 1000000.0f;
+        doe_min = fvec_min = r2_min = 10000000.0f;
+        fvec = doe = r2 = 10000000.0f;
+        kappa = 10000.0f;
+        csa_count = 0;
+        
+        matr[][] = mati[][] = 0;
+        csa_acpt_count[][] = 0;
+        sigma[] = 0.01f;
+        x_min[] = 0;
+        x[i] = Ran();
+    
+    ->generate matrix(call M_generalized)
+    
+    ->normalize the first x[](call Normalize)
+    
+    ->calculate the first fvec(call CalcHami):
+        calculate the first fvec(store in fvec instead of fvec_new) form the normalized x[],
+        so that fvec will have a reasonable initial value, then output the value for checking;
+    
+    ->do CSA for nequi1 times for relaxation(call CSA);       
+    
+
+    ->CORE LOOP
+                    ->Do Constrained Simulated Annealing(CSA) for nswp times(call CSA):
+                        generate new x[] according to the old one, and if csa acceptance rate is high,
+                        the differece between x_new[i] and x[i] will be larger, vice versa,
+                        this is achieved by adjusting sigma[];
+                        
+                        record the min fvec and csa accept rate;
+    
+                ->Exchange Temperatures for nexch times(call ExchTemper):
+                    use two schemes in turns, exchange the beta of a pair of neighbor replicas,
+                    same as exchange the conformations, in order to avoid the local minimal;
+                    
+                    use metropolis as the exchange rule, use current fvec instead of fvec_min;
+                    
+                    record the exchanged processes, record the exchange acceptance rate,
+                    broadcast these data to all processes;         
+
+        ->Adjust Temperature for nrec times:
+            ->find global min of fvec, and the relevant my_rank, doe, r2;   //should be this way
+            
+                optional: output the min values, then broadcast them to all processes;
+                NOTE: will not update each process's fvec_min, doe_min, r2_min, only save in minlocin[],
+                each process still run its own original CSA;
+
+            ->Call Recursion
+                adjust temperature intervals according to exchange acceptance rate, in order to keep a moderate acceptance rate,
+                when rate is large, temperature distance increases, vice versa;
+                
+                optional: when we get a steady accept rate, stop recursion(after srec times);
+
+            ->Do csa for nequi2 times for relaxation(call CSA);
+
+
+    ->write important output in files
+    
+    ->END
+    
+
+void Recursion()
+    ->START
+    
+    ->set variables definitions
+        double weigh_scale = 0.7f;
+        static double wb[];
+        static double wk;
+
+    ->malloc for variables
+        
+    ->initialize variables
+        if Recursion if called for the first time, initialize wb[] and wk,
+        set both as zero;
+    
+    ->MAIN PROCEDURE
+            NOTE:here exchange accept time is the same as exchange accept rate,
+            because in the beta-adjust function, the denominator will be cancelled;
+        find the minimum exchange acceptance rate in each recursion, accumulate in wk;
+        
+        minimum exchange acceptance rate multiply beta[i], accumulate in wb[i];
+        
+        for the first [0 to (nrec-2)] times, use common beta adjust;
+        
+        for the last (nrec-1) time, beta[i] = wb[i]/wk, then free wb[];  //should be this way
+    
+    ->END
+
+    
+void ExchTemper()
+    ->START
+    
+    ->set variables definitions
+        int seed_exch = -5000;
+        
+    ->MAIN LOOP(accroding to the exchange scheme, exchange from the first pair to the last pair):
+        ->use switch scheme in betarank, then use betarank to locate the process IDs of current exchange pair, for example, i, j;
+        ->exchange time count on the lower beta process +1;
+        
+        ->use metropolis to judge whether to exchange, if so:
+            ->switch beta[i]<->beta[j];
+            ->switch betarank[i]<->betarank[j];
+            ->exchange accept count on the lower beta process +1;
+            
+        ->switch to next scheme;
+    
+    ->END
+    
+void CSA()
+    ->START
+    
+    ->set variables definitions
+        double ACPT_MAX = 0.3f, ACPT_MIN = 0.2f;
+        double CONST1 = 2.0f, CONST2 = 2.0f;
+        int COUNT_MAX = 100;
+        
+    ->csa_count++;
+        
+    ->MAIN LOOP(for(int i=0; i<n; i++)):
+        ->restore the x_new[] from x[], in case that x_new[] is not accepted;
+        ->generate x_new[i] from x[i];
+        ->normalize x_new[](call Normalize);
+        ->calculate new fvec, doe, and r2(call CalcHami);
+        ->use metropolis to judge whether the new conformation should be accepted(call MetroFlag);
+            ->if accepted, csa_acpt_count[i]++;
+            ->update fvec, x[];
+            ->judge if fvec < fvec_min;
+                ->if smaller, update fvec_min, x_min[], r2_min, doe_min;
+                
+    ->if csa_count reaches COUNT_MAX
+        ->adjust sigma[] according to csa acceptance ratel;
+        ->reset csa_count = 0, csa_acpt_count[] = 0;
+    
+    ->END
+
+int MetroFlag()
+    ->START
+    
+    ->INPUT:
+        delta, the difference that new hamiltonian minus the old hamiltonian.
+        seed, the address of the seed used to generate random numbers.
+    
+    ->set variables definitions
+        int acpt = 0;
+        
+    ->if(delta <= 0.0) acpt = 1;
+    
+    ->else
+        ->if(exp(-delta) > random number) acpt = 1;
+        NOTE: use else if here will have a different effect, because of C language,
+        Ran will be called even the first if is ture.
+        
+    ->return acpt;      
+        
